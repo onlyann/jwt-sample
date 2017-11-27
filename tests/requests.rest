@@ -1,0 +1,27 @@
+@baseUrl = http://localhost:5000
+@token = Replace me with a token
+@username = admin
+@password = one-jwt-token-please
+
+###
+{{{{baseUrl}}}}
+
+###
+GET {{baseUrl}} HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+POST {{baseUrl}}/login HTTP/1.1
+content-type: application/x-www-form-urlencoded
+
+username={{username}}&password={{password}}
+
+###
+POST {{baseUrl}}/login HTTP/1.1
+content-type: application/json
+
+{
+    "username":"{{username}}",
+    "password":"{{password}}"
+}
+
