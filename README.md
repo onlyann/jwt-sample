@@ -30,7 +30,7 @@ dotnet run
 
 Now the application is running on port 5000.
 
-Verify that you obtain 401 without token:
+Verify that you get HTTP 401 without token:
 ```
 curl http://localhost:5000/foo -v
 ```
@@ -45,7 +45,7 @@ Access the protected resource:
 curl -H "Authorization: Bearer REPLACE_WITH_TOKEN" http://localhost:5000/foo
 ```
 
-If using VS Code, you can also nstall the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension and run requests from the `tests/requests.rest` file.
+If using VS Code, you can also install the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension and run requests from the [./tests/requests.rest](./tests/requests.rest) file.
 
 ## Configuration
 
@@ -62,7 +62,7 @@ The application accepts configuration values from either the
 
 ## Additional notes on security and JWT
 
-The use of HTTPS is a must-have for any production system and must be enforced in the code (not done here).
+HTTPS is mandatory for any production system and should be enforced in the code (not done here).
 
 The `LoginMiddleware` is a naive implementation with hard-coded credentials for demo purposes.
 
