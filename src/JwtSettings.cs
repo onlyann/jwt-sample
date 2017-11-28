@@ -70,10 +70,13 @@ namespace jwt_sample {
             var rsa = RSA.Create();
 
             if (RsaKeysXml != null)
-                rsa.FromXmlString(RsaKeysXml);
+                rsa.FromXml(RsaKeysXml);
             else
+            {
                 rsa.KeySize = AlgoKeySize;
-
+                RsaKeysXml = rsa.ToXml(true);
+            }
+                
             return new RsaSecurityKey(rsa);
         }
     }
