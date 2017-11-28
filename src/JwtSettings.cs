@@ -4,10 +4,13 @@ using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 
 namespace jwt_sample {
-    public class JwtSettings {
-
+    /// <summary>
+    /// Holds JWT settings used for JWT validation and or signing.
+    /// </summary>
+    public class JwtSettings 
+    {
         static RandomNumberGenerator rng = RandomNumberGenerator.Create();
-        static HashSet<string> SupportedAlgorithms = new HashSet<string>(
+        public HashSet<string> SupportedAlgorithms { get; protected set; } = new HashSet<string>(
             new[] {
                 SecurityAlgorithms.HmacSha256,
                 SecurityAlgorithms.HmacSha384,
@@ -19,13 +22,35 @@ namespace jwt_sample {
         public string Audience {get; set;}
         public string Issuer {get; set;}
         public string Algorithm {get; set;}
+
+        public int TokenLifetimeInMinutes { get; set; } = 30;
+ 
+        public TimeSpan ClockSkew {get; set;} = TimeSpan.FromSeconds(5);
+
+        /// <summary>
+        /// Base64 encoded key used by HMAC-SHA symmetrical algorithms.
+        /// </summary>
         public string SecretBase64 {get; set;}
+
+        /// <summary>
+        /// XML representation of RSA private and/or public keys used by RSA algorithms
+        /// </summary>
         public string RsaKeysXml {get; set;}
 
+        /// <summary>
+        /// Key used fr JWT signing and/or verification
+        /// </summary>
+        /// <returns></returns>
         public SecurityKey Key {get; set;}
 
         public bool IsAsymmetricalAlgo { get => Algorithm?.StartsWith("RS") ?? false; }
-        public void Initialize() 
+
+        /// <summary>
+        /// Initializes the security key.
+        /// If no algorithm is set, defaults to HMAC-SHA256.
+        /// If no key is provided, will generate one on the fly based on the type of algorithm
+        /// </summary>
+        public void InitializeKey() 
         {
             Algorithm = Algorithm ?? SecurityAlgorithms.HmacSha256;
             if (!SupportedAlgorithms.Contains(Algorithm))
@@ -34,7 +59,7 @@ namespace jwt_sample {
             Key = IsAsymmetricalAlgo ? GetOrCreateRsaKey() : GetOrCreateSymmetricKey();
         }
 
-        public int AlgoKeySize 
+        private int AlgoKeySize 
         { 
             get 
             {
@@ -50,7 +75,7 @@ namespace jwt_sample {
             }
         }
 
-        public SecurityKey GetOrCreateSymmetricKey()
+        private SecurityKey GetOrCreateSymmetricKey()
         {
             byte[] secret = null;
 
@@ -65,17 +90,14 @@ namespace jwt_sample {
             return new SymmetricSecurityKey(secret);
         }
 
-        public SecurityKey GetOrCreateRsaKey() 
+        private SecurityKey GetOrCreateRsaKey() 
         {
             var rsa = RSA.Create();
 
             if (RsaKeysXml != null)
                 rsa.FromXml(RsaKeysXml);
             else
-            {
                 rsa.KeySize = AlgoKeySize;
-                RsaKeysXml = rsa.ToXml(true);
-            }
                 
             return new RsaSecurityKey(rsa);
         }

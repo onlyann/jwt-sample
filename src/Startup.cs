@@ -27,23 +27,11 @@ namespace jwt_sample
         public void ConfigureServices(IServiceCollection services)
         {
             var settings = Configuration.Get<JwtSettings>();
-            settings.Initialize();
 
-            services.AddSingleton(settings);
+            // registers JWT services for authentication and or signing
+            services.AddJwtAuthentication(settings);
 
-            var tokenValidator = new JwtSecurityTokenHandler();
-            tokenValidator.InboundClaimTypeMap.Clear();
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opt => {
-                    opt.TokenValidationParameters.IssuerSigningKey = settings.Key;
-                    opt.TokenValidationParameters.ValidIssuer = settings.Issuer;
-                    opt.TokenValidationParameters.ValidAudience = settings.Audience;
-                    opt.TokenValidationParameters.NameClaimType = "sub";
-                    opt.SecurityTokenValidators.Clear();
-                    opt.SecurityTokenValidators.Add(tokenValidator);
-                });
-            
+            // register ASP.NET Core authorization services
             services.AddAuthorization();
         }
 
@@ -56,12 +44,17 @@ namespace jwt_sample
 
             Func<HttpContext, bool> isLoginPost = ctx => ctx.Request.Path == "/login" && ctx.Request.Method == "POST";
 
+            // middleware that will process POST requests at /login and will return a JWT token
             app.MapWhen(isLoginPost, appOnLoginPost => { appOnLoginPost.UseMiddleware<LoginMiddleware>(); });
 
+            // if a Bearer token is present and signature is valid, 
+            //a user will be set on HttpContext.User (ie authenticated request)
             app.UseAuthentication();
 
+            // pass-through if request is authenticated, otherwise returns a 401 response.
             app.UseMiddleware<DenyAnonymousMiddleware>();
 
+            // only authenticated requests will run this middleware
             app.Run(context => context.Response.WriteAsync($"Hello {context.User.Identity.Name}!"));
         }
     }

@@ -7,7 +7,7 @@ namespace jwt_sample
 {
     /// <summary>
     /// Taken from https://github.com/dotnet/corefx/issues/23686
-    /// Importing RSA keys from/to a file a not currently supported cross platforms
+    /// Importing RSA keys from/to a file a not yet supported on all platforms
     /// </summary>
     internal static class RSAKeyExtensions
     {    

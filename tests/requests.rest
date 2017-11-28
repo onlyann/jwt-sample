@@ -1,22 +1,22 @@
 @baseUrl = http://localhost:5000
-@token = Replace me with a token
+@token = REPLACE_ME
 @username = admin
 @password = one-jwt-token-please
 
-###
+### call protected path
 {{{{baseUrl}}}}
 
-###
+### call protected path with bearer token
 GET {{baseUrl}} HTTP/1.1
 Authorization: Bearer {{token}}
 
-###
+### authenticates with credentials via form POST
 POST {{baseUrl}}/login HTTP/1.1
 content-type: application/x-www-form-urlencoded
 
 username={{username}}&password={{password}}
 
-###
+### authenticated with credentials via JSON POST
 POST {{baseUrl}}/login HTTP/1.1
 content-type: application/json
 

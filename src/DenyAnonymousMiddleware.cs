@@ -21,6 +21,7 @@ namespace jwt_sample
 
         public async Task Invoke(HttpContext context)
         {
+            // verify that the user is authenticated
             var result = await authzService.AuthorizeAsync(context.User, resource: null, policy: denyAnonymousPolicy);
 
             if (!result.Succeeded) {

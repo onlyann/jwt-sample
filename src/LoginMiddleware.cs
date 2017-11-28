@@ -22,7 +22,9 @@ namespace jwt_sample
         {
             this.settings = settings;
             signingCredentials = new SigningCredentials(settings.Key, settings.Algorithm);
-            jwtTokenHandler = new JwtSecurityTokenHandler();
+            jwtTokenHandler = new JwtSecurityTokenHandler() {
+                TokenLifetimeInMinutes = settings.TokenLifetimeInMinutes
+            };
         }
 
         public async Task Invoke(HttpContext context)
@@ -34,18 +36,25 @@ namespace jwt_sample
                 return;
             }
  
+            // authenticates the user by created a claims principal
             context.User = new ClaimsPrincipal(new ClaimsIdentity( new [] { new Claim("sub", req.Username) }));
             
+            // creates a JWT token that represents the authenticated user
             var jwtToken = jwtTokenHandler.CreateJwtSecurityToken(
                 settings.Issuer, 
                 settings.Audience, 
-                context.User.Identities.First(), 
+                context.User.Identities.First(),
                 signingCredentials: signingCredentials);
 
+            // returns the JWT token in the body
             context.Response.ContentType = "text/plain";
             await context.Response.WriteAsync(jwtTokenHandler.WriteToken(jwtToken));
         }
 
+        /// <summary>
+        /// Hardcoded validation of username/password for demo purposes
+        /// A real application would instead validate against a user store
+        /// </summary>
         private bool ValidateCredentials(LoginRequest req) => req.Username == "admin" && req.Password == "one-jwt-token-please";
 
         private LoginRequest ParseRequest(HttpContext context) 
