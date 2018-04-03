@@ -36,7 +36,7 @@ namespace jwt_sample
                 return;
             }
  
-            // authenticates the user by created a claims principal
+            // authenticates the user
             context.User = new ClaimsPrincipal(new ClaimsIdentity( new [] { new Claim("sub", req.Username) }));
             
             // creates a JWT token that represents the authenticated user
