@@ -15,10 +15,6 @@ It has no dependency on ASP.NET Core MVC or ASP.NET Core Identity.
 Start here https://jwt.io/introduction/.
 The RFC standards can be found at https://tools.ietf.org/html/rfc7519.
 
-There is a lot of controversy around JWT and what it should be used for.
-
-I highly recommend doing [your own research on JWT before using it](https://www.google.com.au/search?q=should+i+use+jwt&oq=should+i+use+JWT).
-
 ## Getting Started
 
 ```
@@ -28,7 +24,7 @@ dotnet restore
 dotnet run
 ```
 
-Now the application is running on port 5000.
+The application is running on port 5000.
 
 Verify that you get HTTP 401 without token:
 ```
@@ -66,7 +62,7 @@ HTTPS is mandatory for any production system and should be enforced in the code 
 
 The `LoginMiddleware` is a naive implementation with hard-coded credentials for demo purposes.
 
-When the JWT authentication is stateless (like in this demo), the tokens can't be invalidated. For securiy reasons, their lifetime tends to be short.
+When the JWT authentication is stateless (like in this demo), the tokens can't be invalidated. For security reasons, their lifetime tends to be short.
 
 When a token expires, the user needs to reauthenticate again.  
 To prevent users from authenticating too often, some applications introduce *refresh tokens*.  
@@ -78,7 +74,7 @@ When the revocation of specific tokens is necessary, some applications introduce
 
 It is recommended to have automatic rotation of keys. This is supported by the underlying
 ASP.NET Core API but is not exposed in this sample app.  
-If the application is hosted on Azure, [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-whatis) can help to manage the keys.
+If the application is hosted on Azure, [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-whatis) can help managing the keys.
 
 A common use case for JWT is to have an *Auth* API that issues access tokens. This *Auth* API would accept credentials, third-party social logins, api keys, ...
 
